@@ -52,6 +52,7 @@ let imagenes = [
 let nombreImg = [];
 let posImg = [];
 let aux = []
+let tablero = d.querySelector(".tablero");
 let aciertos = 0;
 let intentos = 0
 let tiempo = 60
@@ -59,26 +60,35 @@ let mostrarAciertos = d.querySelector(".aciertos")
 let mostrarIntentos = d.querySelector('.intentos')
 let mostrarTiempo = d.querySelector('.tiempo')
 let botonIniciar = d.querySelector('.boton-iniciar')
+let jugador = d.querySelector('.player-1')
 let juegoActivo = false
+let nivel = 1
+let mostrarNivel = d.querySelector('.nivel')
+let tiempoTranscurrido;
+
+imagenes.sort(()=>Math.random()-0.5)
 
 botonIniciar.addEventListener('click',()=>{
-    
-let tiempoTranscurrido = setInterval(function(){
-    if(tiempo==10){
-        
-        mostrarTiempo.setAttribute('style','color:red; font-size: 30px')
-    }else if(tiempo == -1){
-        clearInterval(tiempoTranscurrido)
-        alert("Perdiste! :( No adivinaste todas las imagenes")
-        location.reload()
+    jugador.textContent = prompt("Ingrese su nombre");
+    if(juegoActivo == false && nivel == 1){
+        juegoActivo = true
+        agregarImagenes()
+        tiempoDeJuego()
+
+    }else if(juegoActivo == false && nivel == 2){
+        juegoActivo = true
+        agregarImagenes()
+        tiempoDeJuego()
+    }else if(juegoActivo == false && nivel == 3){
+        juegoActivo = true
+        agregarImagenes()
+        tiempoDeJuego()
     }
-    mostrarTiempo.textContent = tiempo--
-},1000)
-agregarImagenes()
+
 })
 
 
-let tablero = d.querySelector(".tablero");
+
 //Agregar evento a las imagenes
 function agregarImagenes() {
     for (let x = 0; x < imagenes.length; x++) {
@@ -137,8 +147,67 @@ function compararImg() {
 
     nombreImg = [];
     posImg = [];
+
+    if(aciertos == 6 && nivel == 1){
+        alert('felicitaciones pasaste del nivel')
+        //aciertos = 0
+        //intentos = 0
+        clearInterval(tiempoTranscurrido)
+        tiempo = 45
+        nivel = 2
+        mostrarNivel.textContent = nivel
+        mostrarAciertos.textContent = aciertos
+        mostrarIntentos.textContent = intentos
+        mostrarTiempo.textContent = tiempo
+        quitarImagenes()
+        juegoActivo = false
+    }else if(aciertos == 12 && nivel == 2){
+        alert('felicitaciones pasaste del nivel')
+        //aciertos = 0
+        //intentos = 0
+        clearInterval(tiempoTranscurrido)
+        tiempo = 30
+        nivel = 3
+        mostrarNivel.textContent = nivel
+        mostrarAciertos.textContent = aciertos
+        mostrarIntentos.textContent = intentos
+        mostrarTiempo.textContent = tiempo
+        quitarImagenes()
+        juegoActivo = false
+    }else if(aciertos == 18 && nivel == 3){
+        alert('El juego ha terminado')
+        //aciertos = 0
+        //intentos = 0
+        clearInterval(tiempoTranscurrido)
+        tiempo = 60
+        nivel = 1
+        mostrarNivel.textContent = nivel
+        mostrarAciertos.textContent = aciertos
+        mostrarIntentos.textContent = intentos
+        mostrarTiempo.textContent = tiempo
+        quitarImagenes()
+        juegoActivo = false
+    }
 }
 
 function tiempoDeJuego(){
-    
+    tiempoTranscurrido = setInterval(function(){
+        mostrarNivel.textContent = nivel
+        if(tiempo==10){
+            
+            mostrarTiempo.setAttribute('style','color:red; font-size: 30px')
+        }else if(tiempo == -1){
+            clearInterval(tiempoTranscurrido)
+            alert("Perdiste! :( No adivinaste todas las imagenes")
+            location.reload()
+        }
+        mostrarTiempo.textContent = tiempo--
+    },1000)
+}
+
+function quitarImagenes(){
+    let todasLasImagenes = d.querySelectorAll('.tablero div')
+    for(let i = 0; i < todasLasImagenes.length; i++){
+        todasLasImagenes[i].remove()
+    }
 }
