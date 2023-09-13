@@ -65,15 +65,23 @@ let juegoActivo = false
 let nivel = 1
 let mostrarNivel = d.querySelector('.nivel')
 let tiempoTranscurrido;
+let sonidoFondo = new Audio("/sonidos/fondo.mp3");
+let sonidoCard = new Audio("/sonidos/card.mp3");
+let player = ""
+let rankingJugadores = []
+let puntajeJugador ={}
+
 
 imagenes.sort(()=>Math.random()-0.5)
 
 botonIniciar.addEventListener('click',()=>{
-    jugador.textContent = prompt("Ingrese su nombre");
+    
     if(juegoActivo == false && nivel == 1){
         juegoActivo = true
         agregarImagenes()
         tiempoDeJuego()
+        player = jugador.textContent = prompt("Ingrese su nombre");
+        
 
     }else if(juegoActivo == false && nivel == 2){
         juegoActivo = true
@@ -84,7 +92,7 @@ botonIniciar.addEventListener('click',()=>{
         agregarImagenes()
         tiempoDeJuego()
     }
-
+    sonidoFondo.play()
 })
 
 
@@ -120,13 +128,11 @@ function mostrarImg() {
 function compararImg() {
     let todasImg = d.querySelectorAll(".tablero .col-3 img")
 
-
-
     if (nombreImg[0] == nombreImg[1]) {
         if(posImg[0] != posImg[1]){
             todasImg[posImg[0]].setAttribute("src", './imagenes/check.jpg')
         todasImg[posImg[1]].setAttribute("src", './imagenes/check.jpg')
-
+            sonidoCard.play()
         todasImg[posImg[0]].removeEventListener('click',mostrarImg)
         todasImg[posImg[1]].removeEventListener('click',mostrarImg)
         aciertos++
@@ -144,11 +150,12 @@ function compararImg() {
         intentos++
         mostrarIntentos.textContent = intentos
     }
-
+  
     nombreImg = [];
     posImg = [];
 
     if(aciertos == 6 && nivel == 1){
+
         alert('felicitaciones pasaste del nivel')
         //aciertos = 0
         //intentos = 0
@@ -174,21 +181,33 @@ function compararImg() {
         mostrarTiempo.textContent = tiempo
         quitarImagenes()
         juegoActivo = false
+        
     }else if(aciertos == 18 && nivel == 3){
+   
         alert('El juego ha terminado')
-        //aciertos = 0
-        //intentos = 0
-        clearInterval(tiempoTranscurrido)
-        tiempo = 60
-        nivel = 1
-        mostrarNivel.textContent = nivel
-        mostrarAciertos.textContent = aciertos
-        mostrarIntentos.textContent = intentos
-        mostrarTiempo.textContent = tiempo
-        quitarImagenes()
-        juegoActivo = false
+        sonidoFondo.pause()
+
+        location.reload()
+        puntajeJugador = {
+            player,
+            tiempo,
+            intentos
+        }
+        cargarDatos(puntajeJugador)
+    }
+    
+    function cargarDatos(object) {
+        let keyStorage = "puntaje"
+        let localS = JSON.parse(localStorage.getItem(keyStorage))
+        if (localS) {
+            rankingJugadores = localS
+        }
+        rankingJugadores.push(object)
+        localStorage.setItem(keyStorage, JSON.stringify(rankingJugadores))
     }
 }
+
+
 
 function tiempoDeJuego(){
     tiempoTranscurrido = setInterval(function(){
