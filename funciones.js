@@ -52,6 +52,31 @@ let imagenes = [
 let nombreImg = [];
 let posImg = [];
 let aux = []
+let aciertos = 0;
+let intentos = 0
+let tiempo = 60
+let mostrarAciertos = d.querySelector(".aciertos")
+let mostrarIntentos = d.querySelector('.intentos')
+let mostrarTiempo = d.querySelector('.tiempo')
+let botonIniciar = d.querySelector('.boton-iniciar')
+let juegoActivo = false
+
+botonIniciar.addEventListener('click',()=>{
+    
+let tiempoTranscurrido = setInterval(function(){
+    if(tiempo==10){
+        
+        mostrarTiempo.setAttribute('style','color:red; font-size: 30px')
+    }else if(tiempo == -1){
+        clearInterval(tiempoTranscurrido)
+        alert("Perdiste! :( No adivinaste todas las imagenes")
+        location.reload()
+    }
+    mostrarTiempo.textContent = tiempo--
+},1000)
+agregarImagenes()
+})
+
 
 let tablero = d.querySelector(".tablero");
 //Agregar evento a las imagenes
@@ -68,13 +93,9 @@ function agregarImagenes() {
         tablero.appendChild(div)
     }
 }
-agregarImagenes()
-
 
 function mostrarImg() {
     let imgId = this.getAttribute('id')
-
-
 
     this.setAttribute('src', imagenes[imgId].url)
     nombreImg.push(imagenes[imgId].nombre)
@@ -84,6 +105,7 @@ function mostrarImg() {
     }
 
 
+
 }
 function compararImg() {
     let todasImg = d.querySelectorAll(".tablero .col-3 img")
@@ -91,20 +113,32 @@ function compararImg() {
 
 
     if (nombreImg[0] == nombreImg[1]) {
-        todasImg[posImg[0]].setAttribute("src", './imagenes/check.jpg')
+        if(posImg[0] != posImg[1]){
+            todasImg[posImg[0]].setAttribute("src", './imagenes/check.jpg')
         todasImg[posImg[1]].setAttribute("src", './imagenes/check.jpg')
 
         todasImg[posImg[0]].removeEventListener('click',mostrarImg)
         todasImg[posImg[1]].removeEventListener('click',mostrarImg)
+        aciertos++
+        mostrarAciertos.textContent = aciertos
+        }else{
+            alert("Debes escoger otra imagen")
+            todasImg[posImg[0]].setAttribute('src','./imagenes/logo.png')
+            intentos++
+            mostrarIntentos.textContent = intentos;
+        }
 
     } else {
         todasImg[posImg[0]].setAttribute("src", './imagenes/logo.png')
         todasImg[posImg[1]].setAttribute("src", './imagenes/logo.png')
+        intentos++
+        mostrarIntentos.textContent = intentos
     }
-
-
-
 
     nombreImg = [];
     posImg = [];
+}
+
+function tiempoDeJuego(){
+    
 }
