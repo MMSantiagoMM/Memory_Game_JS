@@ -70,12 +70,15 @@ let sonidoCard = new Audio("/sonidos/card.mp3");
 let player = ""
 let rankingJugadores = []
 let puntajeJugador ={}
+let keyStorage = "puntaje"
+let localS = JSON.parse(localStorage.getItem(keyStorage))
+let TbodyTable = d.querySelector('.tbody_table')
 
 
-imagenes.sort(()=>Math.random()-0.5)
+
 
 botonIniciar.addEventListener('click',()=>{
-    
+    imagenes.sort(()=>Math.random()-0.5)
     if(juegoActivo == false && nivel == 1){
         juegoActivo = true
         agregarImagenes()
@@ -155,32 +158,14 @@ function compararImg() {
     posImg = [];
 
     if(aciertos == 6 && nivel == 1){
-
-        alert('felicitaciones pasaste del nivel')
-        //aciertos = 0
-        //intentos = 0
-        clearInterval(tiempoTranscurrido)
         tiempo = 45
         nivel = 2
-        mostrarNivel.textContent = nivel
-        mostrarAciertos.textContent = aciertos
-        mostrarIntentos.textContent = intentos
-        mostrarTiempo.textContent = tiempo
-        quitarImagenes()
-        juegoActivo = false
+        cambioDeNivel(tiempo,nivel)
+
     }else if(aciertos == 12 && nivel == 2){
-        alert('felicitaciones pasaste del nivel')
-        //aciertos = 0
-        //intentos = 0
-        clearInterval(tiempoTranscurrido)
         tiempo = 30
         nivel = 3
-        mostrarNivel.textContent = nivel
-        mostrarAciertos.textContent = aciertos
-        mostrarIntentos.textContent = intentos
-        mostrarTiempo.textContent = tiempo
-        quitarImagenes()
-        juegoActivo = false
+        cambioDeNivel(tiempo,nivel)
         
     }else if(aciertos == 18 && nivel == 3){
    
@@ -195,16 +180,7 @@ function compararImg() {
         }
         cargarDatos(puntajeJugador)
     }
-    
-    function cargarDatos(object) {
-        let keyStorage = "puntaje"
-        let localS = JSON.parse(localStorage.getItem(keyStorage))
-        if (localS) {
-            rankingJugadores = localS
-        }
-        rankingJugadores.push(object)
-        localStorage.setItem(keyStorage, JSON.stringify(rankingJugadores))
-    }
+
 }
 
 
@@ -230,3 +206,45 @@ function quitarImagenes(){
         todasLasImagenes[i].remove()
     }
 }
+
+function cargarDatos(object) {
+    if (localS) {
+        rankingJugadores = localS
+    }
+    rankingJugadores.push(object)
+    localStorage.setItem(keyStorage, JSON.stringify(rankingJugadores))
+}
+
+
+
+
+localS.sort((a,b)=>a.intentos - b.intentos)
+
+localS.forEach((element,item) => {
+    
+    let tr = d.createElement('tr')
+    tr.innerHTML = `
+    <tr>
+        <td> ${item+1}</td>
+        <td> ${element.player}</td>
+        <td> ${element.tiempo}</td>
+        <td> ${element.intentos}</td>
+    </tr>`
+    TbodyTable.appendChild(tr) 
+    
+
+    
+});
+
+function cambioDeNivel(tiempo,nivel){
+    alert('felicitaciones pasaste del nivel')
+    clearInterval(tiempoTranscurrido)
+    quitarImagenes()
+    mostrarNivel.textContent = nivel
+    mostrarAciertos.textContent = aciertos
+    mostrarIntentos.textContent = intentos
+    mostrarTiempo.textContent = tiempo
+    juegoActivo = false
+}
+
+
