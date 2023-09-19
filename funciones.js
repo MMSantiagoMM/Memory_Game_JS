@@ -73,7 +73,7 @@ let puntajeJugador ={}
 let keyStorage = "puntaje"
 let localS = JSON.parse(localStorage.getItem(keyStorage))
 let TbodyTable = d.querySelector('.tbody_table')
-
+let auxTiempo= 0;
 
 
 
@@ -90,6 +90,7 @@ botonIniciar.addEventListener('click',()=>{
         juegoActivo = true
         agregarImagenes()
         tiempoDeJuego()
+
     }else if(juegoActivo == false && nivel == 3){
         juegoActivo = true
         agregarImagenes()
@@ -97,8 +98,6 @@ botonIniciar.addEventListener('click',()=>{
     }
     sonidoFondo.play()
 })
-
-
 
 //Agregar evento a las imagenes
 function agregarImagenes() {
@@ -130,7 +129,7 @@ function mostrarImg() {
 }
 function compararImg() {
     let todasImg = d.querySelectorAll(".tablero .col-3 img")
-
+    var auxTiempo = 0
     if (nombreImg[0] == nombreImg[1]) {
         if(posImg[0] != posImg[1]){
             todasImg[posImg[0]].setAttribute("src", './imagenes/check.jpg')
@@ -156,26 +155,29 @@ function compararImg() {
   
     nombreImg = [];
     posImg = [];
-
+    auxTiempo += Math.abs(tiempo - 60)
+    
+    console.log()
     if(aciertos == 6 && nivel == 1){
         tiempo = 45
+        auxTiempo += Math.abs(tiempo - 45)
         nivel = 2
         cambioDeNivel(tiempo,nivel)
 
     }else if(aciertos == 12 && nivel == 2){
         tiempo = 30
+        auxTiempo += Math.abs(tiempo - 60)
         nivel = 3
         cambioDeNivel(tiempo,nivel)
         
     }else if(aciertos == 18 && nivel == 3){
-   
         alert('El juego ha terminado')
         sonidoFondo.pause()
 
         location.reload()
         puntajeJugador = {
             player,
-            tiempo,
+            auxTiempo,
             intentos
         }
         cargarDatos(puntajeJugador)
@@ -196,9 +198,15 @@ function tiempoDeJuego(){
             alert("Perdiste! :( No adivinaste todas las imagenes")
             location.reload()
         }
+        
         mostrarTiempo.textContent = tiempo--
+        auxTiempo = tiempo
+
     },1000)
+
 }
+
+
 
 function quitarImagenes(){
     let todasLasImagenes = d.querySelectorAll('.tablero div')
@@ -227,7 +235,7 @@ localS.forEach((element,item) => {
     <tr>
         <td> ${item+1}</td>
         <td> ${element.player}</td>
-        <td> ${element.tiempo}</td>
+        <td> ${element.auxTiempo}</td>
         <td> ${element.intentos}</td>
     </tr>`
     TbodyTable.appendChild(tr) 
